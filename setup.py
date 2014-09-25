@@ -72,17 +72,7 @@ setup(
     url='https://github.com/FlorianLudwig/rueckenwind',
     description='tornado based webframework',
     author='Florian Ludwig',
-    install_requires=['tornado>=4.0.0,<5.0',
-                      'jinja2',
-                      'babel',
-                      'argcomplete>=0.6.6,<1.0',
-                      'mock',
-                      'configobj',
-                      'chardet',
-                      'pytz',
-                      'PyYAML>=3.10',
-                      'future'
-                      ],
+    install_requires=['motor>=0.3.2'],
     extras_requires={
         'test': ['tox', 'pytest', 'pep8'],
         'docs': ['sphinx_rtd_theme']
