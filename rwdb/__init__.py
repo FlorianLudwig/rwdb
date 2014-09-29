@@ -36,13 +36,17 @@ To configure a connection rw's :ref:`cfg` is used::
 """
 import numbers
 from copy import copy
+import re
 import warnings
+
 import bson
+import bson.errors
 from motor import Op, MotorClient, MotorReplicaSetClient
 import pymongo.read_preferences
 
 import rw
 import rw.plugin
+import rw.routing
 from rw import gen, scope
 
 db = None
@@ -345,7 +349,7 @@ class Document(DocumentBase):
         ret = yield Op(self.get_collection().insert, self)
         # creating a new entry without an _id MongoDB will
         # generate an id in ObjectId format.
-        if not '_id' in self and isinstance(ret, ObjectId):
+        if not '_id' in self and isinstance(ret, bson.ObjectId):
             self['_id'] = ret
         raise gen.Return(ret)
 
@@ -451,6 +455,21 @@ def connect(cfg):
 
 
 
+NON_HEX = re.compile('[^0-9a-f]')
+
+
+def routing_converter_object_id(data):
+    """converter "ObjectId" for rw.routing
+
+    :param str data:
+    """
+    length = 24
+    try:
+        value = bson.ObjectId(data[:length])
+    except bson.errors.InvalidId, e:
+        raise rw.routing.NoMatchError(str(e))
+    return length, value
+
 
 plugin = rw.plugin.Plugin('rwdb')
 
@@ -477,10 +496,13 @@ def init(scope, settings):
     }
     scope['rwdb:clients'] = clients
     scope['rwdb:databases'] = databases
+    scope.setdefault('rw.routing:converters', {}).update({
+        'ObjectId': routing_converter_object_id
+    })
 
 
-# @plugin.shutdown
-@gen.coroutine
-def shutdown():
-    for client in CLIENTS.itervalues():
-        client.disconnect()
+# TODO @plugin.shutdown
+# @gen.coroutine
+# def shutdown():
+#     for client in CLIENTS.itervalues():
+#         client.disconnect()
