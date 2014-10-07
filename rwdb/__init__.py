@@ -341,6 +341,9 @@ class Document(DocumentBase):
         return '<%s %s>' % (self.__class__.__name__,
                             ' '.join('%s=%s' % item for item in self.items()))
 
+    def __hash__(self):
+        return hash(self._id)
+
     @gen.coroutine
     def insert(self):
         """Save entry in collection (updates or creates)
