@@ -349,7 +349,7 @@ class Document(DocumentBase):
         """Save entry in collection (updates or creates)
 
         returns Future"""
-        ret = yield Op(self.get_collection().insert, self)
+        ret = yield self.get_collection().insert(self)
         # creating a new entry without an _id MongoDB will
         # generate an id in ObjectId format.
         if not '_id' in self and isinstance(ret, bson.ObjectId):
@@ -361,7 +361,10 @@ class Document(DocumentBase):
         """update entry in collection (updates or creates)
 
         returns Future"""
-        ret = yield Op(self.get_collection().update, {'_id': self['_id']}, self, upsert=upsert)
+        if upsert and '_id' not in self:
+            ret = yield self.get_collection().insert(self)
+        else:
+            ret = yield self.get_collection().update({'_id': self['_id']}, self, upsert=upsert)
         raise gen.Return(ret)
 
     @gen.coroutine
