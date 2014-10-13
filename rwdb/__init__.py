@@ -65,8 +65,8 @@ class Cursor(object):
         raise gen.Return([self.col_cls(**e) for e in data])
 
     @gen.coroutine
-    def to_dict(self):
-        data = yield Op(self.db_cursor.to_list)
+    def to_dict(self, length):
+        data = yield self.db_cursor.to_list(length)
         raise gen.Return({e['_id']: self.col_cls(**e) for e in data})
 
     @gen.coroutine
@@ -141,8 +141,8 @@ class Query(object):
     def to_list(self, length):
         return Cursor(self).to_list(length)
 
-    def to_dict(self):
-        return Cursor(self).to_dict()
+    def to_dict(self, length):
+        return Cursor(self).to_dict(length)
 
     def cursor(self):
         return Cursor(self)
