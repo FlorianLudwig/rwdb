@@ -393,9 +393,10 @@ class Document(DocumentBase):
         warnings.warn('use get_collection() instead', DeprecationWarning)
         return self.get_collection()
 
-    def get_collection(self):
+    @classmethod
+    def get_collection(cls):
         databases = rw.scope.get('rwdb:databases')
-        return databases[self._connection][self._name]
+        return databases[cls._connection][cls._name]
 
 
 class Unicode(Field):
