@@ -18,10 +18,10 @@ class TestCommand(setuptools.command.test.test):
 
     def run_tests(self):
         fails = []
-        from tox._config import parseconfig
-        from tox._cmdline import Session
+        from tox.config import parseconfig
+        from tox.session import Session
 
-        config = parseconfig(self.test_args, 'tox')
+        config = parseconfig(self.test_args)
         retcode = Session(config).runcommand()
         if retcode != 0:
             fails.append('tox returned errors')
@@ -42,36 +42,13 @@ class TestCommand(setuptools.command.test.test):
             sys.exit(1)
 
 
-def get_version_suffix():
-    from git import Repo
-    from datetime import datetime
-    repo = Repo()
-    committed_date = repo.head.commit.committed_date
-    return '.git' + datetime.frhomtimestamp(committed_date).strftime('%Y%m%d%H%M%S')
-
-
-class sdist_git(sdist):
-    def make_release_tree(self, base_dir, files):
-        sdist.make_release_tree(self, base_dir, files)
-        # make sure we include the git version in the release
-        setup_py = open(base_dir + '/setup.py').read()
-        setup_py = setup_py.replace("\nversion_suffix = ''\n", "\nversion_suffix = {}\n".format(repr(version_suffix)))
-        f = open(base_dir + '/setup.py', 'w')
-        f.write(setup_py)
-        f.close()
-
-
-if '--dev' in sys.argv:
-    version_suffix = get_version_suffix()
-    sys.argv.remove('--dev')
-
-
 setup(
     name="rwdb",
-    version="0.0.1" + version_suffix,
+    version="0.0.1",
     url='https://github.com/FlorianLudwig/rueckenwind',
     description='tornado based webframework',
     author='Florian Ludwig',
+    author_email='vierzigundzwei@gmail.com',
     install_requires=['motor>=0.3.2'],
     extras_requires={
         'test': ['tox', 'pytest', 'pep8'],
@@ -88,7 +65,6 @@ setup(
         ],
     },
     cmdclass={
-        'sdist': sdist_git,
         'test': TestCommand
     }
 )
