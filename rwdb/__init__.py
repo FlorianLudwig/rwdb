@@ -41,7 +41,7 @@ import warnings
 
 import bson
 import bson.errors
-from motor import Op, MotorClient, MotorReplicaSetClient
+from motor import MotorClient, MotorReplicaSetClient
 import pymongo.read_preferences
 
 import rw
@@ -155,7 +155,7 @@ class Query(object):
     @gen.coroutine
     def count(self):
         col = self.get_collection()
-        ret = yield Op(col.find(self._filters, sort=self._sort, skip=self._skip, limit=self._limit).count)
+        ret = yield col.find(self._filters, sort=self._sort, skip=self._skip, limit=self._limit).count()
         raise gen.Return(ret)
 
     @gen.coroutine
@@ -167,7 +167,7 @@ class Query(object):
             filters.update(args[0])
             if len(args) > 1:
                 self._fields = args[1]
-        ret = yield Op(col.find_one, filters, sort=self._sort, skip=self._skip, limit=self._limit,
+        ret = yield col.find_one(filters, sort=self._sort, skip=self._skip, limit=self._limit,
                        fields=self._fields)
         if ret:
             raise gen.Return(self.col_cls(**ret))
@@ -369,7 +369,7 @@ class Document(DocumentBase):
 
     @gen.coroutine
     def remove(self):
-        ret = yield Op(self.get_collection().remove, {'_id': self['_id']})
+        ret = yield self.get_collection().remove({'_id': self['_id']})
         raise gen.Return(ret)
 
     @classmethod
@@ -450,9 +450,10 @@ def connect(cfg):
     :type cfg: dict
     """
     if cfg.get('replica_set'):
-        client = yield Op(MotorReplicaSetClient(cfg['host'], replicaSet=cfg['replica_set']).open)
+        client = MotorReplicaSetClient(cfg['host'], replicaSet=cfg['replica_set'])
     else:
-        client = yield Op(MotorClient(cfg['host']).open)
+        client = MotorClient(cfg['host'])
+    yield client.open
     if cfg.get('user'):
         client[cfg['db']].authenticate(cfg['user'], cfg['password'])
     if cfg.get('read_preference'):
@@ -473,7 +474,7 @@ def routing_converter_object_id(data):
     length = 24
     try:
         value = bson.ObjectId(data[:length])
-    except bson.errors.InvalidId, e:
+    except bson.errors.InvalidId as e:
         raise rw.routing.NoMatchError(str(e))
     return length, value
 
