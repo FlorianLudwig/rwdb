@@ -38,6 +38,7 @@ import numbers
 from copy import copy
 import re
 import warnings
+import logging
 
 import bson
 import bson.errors
@@ -50,6 +51,7 @@ import rw.routing
 from rw import gen, scope
 
 db = None
+LOG = logging.getLogger(__name__)
 
 
 class Cursor(object):
@@ -450,8 +452,10 @@ def connect(cfg):
     :type cfg: dict
     """
     if cfg.get('replica_set'):
+        LOG.info("connecting to replicaSet %s", cfg['host'])
         client = MotorReplicaSetClient(cfg['host'], replicaSet=cfg['replica_set'])
     else:
+        LOG.info("connecting to %s", cfg['host'])
         client = MotorClient(cfg['host'])
     yield client.open
     if cfg.get('user'):
