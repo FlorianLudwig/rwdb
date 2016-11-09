@@ -457,7 +457,7 @@ def connect(cfg):
     else:
         LOG.info("connecting to %s", cfg['host'])
         client = MotorClient(cfg['host'])
-    yield client.open
+    yield client.open()
     if cfg.get('user'):
         client[cfg['db']].authenticate(cfg['user'], cfg['password'])
     if cfg.get('read_preference'):
