@@ -459,7 +459,7 @@ def connect(cfg):
         client = MotorClient(cfg['host'])
     yield client.open()
     if cfg.get('user'):
-        client[cfg['db']].authenticate(cfg['user'], cfg['password'])
+        yield client[cfg['db']].authenticate(cfg['user'], cfg['password'])
     if cfg.get('read_preference'):
         read_preference = cfg['read_preference'].upper()
         client.read_preference = getattr(pymongo.read_preferences.ReadPreference, read_preference)
