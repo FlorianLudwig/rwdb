@@ -49,7 +49,7 @@ setup(
     description='tornado based webframework',
     author='Florian Ludwig',
     author_email='vierzigundzwei@gmail.com',
-    install_requires=['motor>=0.3.2'],
+    install_requires=['motor>=1.0.0'],
     extras_requires={
         'test': ['tox', 'pytest', 'pep8'],
         'docs': ['sphinx_rtd_theme']

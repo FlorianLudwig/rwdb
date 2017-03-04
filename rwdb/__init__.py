@@ -26,7 +26,7 @@ To configure a connection rw's :ref:`cfg` is used::
     [mongodb]
     host = 127.0.0.1
     db = my_database
-    replica_set = rs1  # optional, only specify if replication is active
+    replicaset = rs1  # optional, only specify if replication is active
     user = me  # optional, specify only if auth is active
     password = pssst  # optional, specify only if auth is active
 
@@ -42,7 +42,7 @@ import logging
 
 import bson
 import bson.errors
-from motor import MotorClient, MotorReplicaSetClient
+from motor import MotorClient
 import pymongo.read_preferences
 
 import rw
@@ -451,12 +451,13 @@ def connect(cfg):
     :param cfg: Dictionary containing configuration for MongoDB connection
     :type cfg: dict
     """
-    if cfg.get('replica_set'):
-        LOG.info("connecting to replicaSet %s", cfg['host'])
-        client = MotorReplicaSetClient(cfg['host'], replicaSet=cfg['replica_set'])
-    else:
-        LOG.info("connecting to %s", cfg['host'])
-        client = MotorClient(cfg['host'])
+    LOG.info("connecting to %s", cfg['host'])
+    client = MotorClient(
+        host=cfg.get('host', 'localhost'),
+        port=cfg.get('port', 27017),
+        tz_aware=cfg.get('tz_aware', False),
+        replicaset=cfg.get('replicaset', cfg.get('replica_set'))
+    )
     yield client.open()
     if cfg.get('user'):
         yield client[cfg['db']].authenticate(cfg['user'], cfg['password'])
