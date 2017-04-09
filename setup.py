@@ -45,7 +45,7 @@ class TestCommand(setuptools.command.test.test):
 setup(
     name="rwdb",
     version="0.0.2",
-    url='https://github.com/FlorianLudwig/rueckenwind',
+    url='https://github.com/FlorianLudwig/rwdb',
     description='tornado based webframework',
     author='Florian Ludwig',
     author_email='vierzigundzwei@gmail.com',
