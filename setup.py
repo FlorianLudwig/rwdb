@@ -28,9 +28,9 @@ class TestCommand(setuptools.command.test.test):
 
         import pep8
         style_guide = pep8.StyleGuide(config_file=BASE_PATH + '/.pep8')
-        style_guide.input_dir(BASE_PATH + '/rw')
+        style_guide.input_dir(BASE_PATH + '/rwdb')
         if style_guide.options.report.get_count() != 0:
-            fails.append('pep8 returned errros for rw/')
+            fails.append('pep8 returned errros for rwdb/')
 
         style_guide = pep8.StyleGuide(config_file=BASE_PATH + '/.pep8')
         style_guide.input_dir(BASE_PATH + '/test')
@@ -44,7 +44,7 @@ class TestCommand(setuptools.command.test.test):
 
 setup(
     name="rwdb",
-    version="0.0.2",
+    version="0.0.3",
     url='https://github.com/FlorianLudwig/rwdb',
     description='tornado based webframework',
     author='Florian Ludwig',
@@ -54,16 +54,8 @@ setup(
         'test': ['tox', 'pytest', 'pep8'],
         'docs': ['sphinx_rtd_theme']
     },
-    packages=find_packages(exclude=['*.test', '*.test.*']),
+    packages=['rwdb'],
     include_package_data=True,
-    package_data={
-        'rw': ['*.html', '*.css', 'templates/html5', 'templates/form', 'templates/nginx']
-    },
-    entry_points={
-        'console_scripts': [
-            'rw = rw.cli:main',
-        ],
-    },
     cmdclass={
         'test': TestCommand
     }
