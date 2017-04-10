@@ -58,7 +58,7 @@ class Cursor(object):
     def __init__(self, query):
         self.col_cls = query.col_cls
         col = query.get_collection()
-        self.db_cursor = col.find(query._filters, fields=query._fields, sort=query._sort, limit=query._limit,
+        self.db_cursor = col.find(query._filters, sort=query._sort, limit=query._limit,
                                   skip=query._skip)
 
     @gen.coroutine
@@ -85,13 +85,12 @@ class Cursor(object):
 
 
 class Query(object):
-    def __init__(self, col_cls, connection, filters=None, sort=None, limit=0, skip=0, fields=None):
+    def __init__(self, col_cls, connection, filters=None, sort=None, limit=0, skip=0):
         self.col_cls = col_cls
         self._sort = sort
         self._filters = filters if filters else {}
         self._limit = limit
         self._skip = skip
-        self._fields = fields
         self._connection = connection
 
     def __item__(self):
@@ -117,7 +116,7 @@ class Query(object):
             'sort': self._sort,
             'limit': self._limit,
             'skip': self._skip,
-            'fields': self._fields
+            # 'fields': self._fields
         }
         params.update(kwargs)
         return Query(self.col_cls, self._connection, **params)
@@ -130,8 +129,8 @@ class Query(object):
         filters.update(kwargs)
         if args:
             filters.update(args[0])
-            if len(args) > 1:
-                self._fields = args[1]
+            # if len(args) > 1:
+            #     self._fields = args[1]
         return self.clone(filters=filters)
 
     def sort(self, sort):
@@ -167,10 +166,9 @@ class Query(object):
         filters.update(kwargs)
         if args:
             filters.update(args[0])
-            if len(args) > 1:
-                self._fields = args[1]
-        ret = yield col.find_one(filters, sort=self._sort, skip=self._skip, limit=self._limit,
-                       fields=self._fields)
+            # if len(args) > 1:
+                # self._fields = args[1]
+        ret = yield col.find_one(filters, sort=self._sort, skip=self._skip, limit=self._limit)
         if ret:
             raise gen.Return(self.col_cls(**ret))
         else:
