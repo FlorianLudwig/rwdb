@@ -458,7 +458,6 @@ def connect(cfg):
         tz_aware=cfg.get('tz_aware', False),
         replicaset=cfg.get('replicaset', cfg.get('replica_set'))
     )
-    yield client.open()
     if cfg.get('user'):
         yield client[cfg['db']].authenticate(cfg['user'], cfg['password'])
     if cfg.get('read_preference'):
