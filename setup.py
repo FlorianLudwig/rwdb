@@ -44,7 +44,7 @@ class TestCommand(setuptools.command.test.test):
 
 setup(
     name="rwdb",
-    version="0.0.3",
+    version="0.0.4",
     url='https://github.com/FlorianLudwig/rwdb',
     description='tornado based webframework',
     author='Florian Ludwig',
