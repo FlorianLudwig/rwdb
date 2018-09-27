@@ -451,8 +451,8 @@ def connect(cfg):
     LOG.info("connecting to %s", cfg['host'])
 
     args = {
-        tz_aware: cfg.get('tz_aware', False),
-        replicaset: cfg.get('replicaset', cfg.get('replica_set'))
+        'tz_aware': cfg.get('tz_aware', False),
+        'replicaset': cfg.get('replicaset', cfg.get('replica_set'))
     }
     if 'uri' in cfg:
         cfg['host'] = cfg['uri']
