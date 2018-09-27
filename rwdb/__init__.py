@@ -23,15 +23,12 @@ Example::
 
 To configure a connection rw's :ref:`cfg` is used::
 
-    [mongodb]
-    host = 127.0.0.1
-    db = my_database
-    replicaset = rs1  # optional, only specify if replication is active
-    user = me  # optional, specify only if auth is active
-    password = pssst  # optional, specify only if auth is active
+    rwdb:
+      default:
+        uri: 'mongodb://mongo:27017/bsc'
 
-    [rw.plugins]
-    rw.db = True
+    rw.plugins:
+      rw.db: true
 
 """
 import numbers
