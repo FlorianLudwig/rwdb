@@ -455,10 +455,10 @@ def connect(cfg):
         'replicaset': cfg.get('replicaset', cfg.get('replica_set'))
     }
     if 'uri' in cfg:
-        cfg['host'] = cfg['uri']
+        args['host'] = cfg['uri']
     else:
-        cfg['host'] = cfg.get('host', 'localhost')
-        cfg['port'] = cfg.get('port', 27017)
+        args['host'] = cfg.get('host', 'localhost')
+        args['port'] = int(cfg.get('port', 27017))
 
     client = MotorClient(*args)
 
