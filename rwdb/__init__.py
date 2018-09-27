@@ -42,6 +42,7 @@ import logging
 
 import bson
 import bson.errors
+from future.utils import PY3
 from motor import MotorClient
 import pymongo.read_preferences
 
@@ -296,8 +297,12 @@ class DocumentMeta(type):
         return ret
 
 
-class DocumentBase(dict):
-    __metaclass__ = DocumentMeta
+if PY3:
+    class DocumentBase(dict, metaclass=DocumentMeta):
+        pass
+else:
+    class DocumentBase(dict):
+        __metaclass__ = DocumentMeta
 
 
 class SubDocument(DocumentBase):
@@ -385,6 +390,8 @@ class Document(DocumentBase):
     @classmethod
     def by_id(cls, _id):
         if not isinstance(_id, cls._id.type):
+            if isinstance(_id, bytes):
+                _id = _id.decode('utf-8')
             _id = cls._id.type(_id)
         return Query(cls, cls._connection).find(_id=_id).find_one()
 
