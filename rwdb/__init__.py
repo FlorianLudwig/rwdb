@@ -449,12 +449,19 @@ def connect(cfg):
     :type cfg: dict
     """
     LOG.info("connecting to %s", cfg['host'])
-    client = MotorClient(
-        host=cfg.get('host', 'localhost'),
-        port=cfg.get('port', 27017),
-        tz_aware=cfg.get('tz_aware', False),
-        replicaset=cfg.get('replicaset', cfg.get('replica_set'))
-    )
+
+    args = {
+        tz_aware: cfg.get('tz_aware', False),
+        replicaset: cfg.get('replicaset', cfg.get('replica_set'))
+    }
+    if 'uri' in cfg:
+        cfg['host'] = cfg['uri']
+    else:
+        cfg['host'] = cfg.get('host', 'localhost')
+        cfg['port'] = cfg.get('port', 27017)
+
+    client = MotorClient(*args)
+
     if cfg.get('user'):
         yield client[cfg['db']].authenticate(cfg['user'], cfg['password'])
     if cfg.get('read_preference'):
