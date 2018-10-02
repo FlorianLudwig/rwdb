@@ -448,8 +448,6 @@ def connect(cfg):
     :param cfg: Dictionary containing configuration for MongoDB connection
     :type cfg: dict
     """
-    LOG.info("connecting to %s", cfg['host'])
-
     args = {
         'tz_aware': cfg.get('tz_aware', False),
         'replicaset': cfg.get('replicaset', cfg.get('replica_set'))
