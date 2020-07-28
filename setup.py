@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 
@@ -44,7 +43,7 @@ class TestCommand(setuptools.command.test.test):
 
 setup(
     name="rwdb",
-    version="0.0.4",
+    version="0.1.0",
     url='https://github.com/FlorianLudwig/rwdb',
     description='tornado based webframework',
     author='Florian Ludwig',
