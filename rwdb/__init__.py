@@ -458,7 +458,7 @@ def connect(cfg):
         args['host'] = cfg.get('host', 'localhost')
         args['port'] = int(cfg.get('port', 27017))
 
-    client = MotorClient(*args)
+    client = MotorClient(**args)
 
     if cfg.get('user'):
         yield client[cfg['db']].authenticate(cfg['user'], cfg['password'])
